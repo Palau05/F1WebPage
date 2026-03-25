@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { circuits2026, isRaceCompleted, getCurrentOrNextRace } from "@/lib/data/circuits";
+import { getFlagEmoji } from "@/lib/data/country-flags";
 import StatusBadge from "@/components/ui/StatusBadge";
 import SlashedContainer from "@/components/ui/SlashedContainer";
 
@@ -70,7 +71,7 @@ export default function CalendarPage() {
                           {circuit.raceName}
                         </h3>
                         <p className="text-sm text-on-surface-variant mt-1">
-                          {circuit.name} — {circuit.city}, {circuit.country}
+                          {circuit.name} — {circuit.city}, {getFlagEmoji(circuit.country)} {circuit.country}
                         </p>
                       </div>
 

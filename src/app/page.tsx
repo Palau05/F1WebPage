@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-const GlobeScene = dynamic(() => import("@/components/globe/GlobeScene"), {
+const GlobeScene = dynamic(() => import("@/components/home/GlobeScene"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[calc(100vh-6.5rem)] flex items-center justify-center bg-surface">
@@ -15,7 +15,7 @@ const GlobeScene = dynamic(() => import("@/components/globe/GlobeScene"), {
 });
 
 const MobileRaceList = dynamic(
-  () => import("@/components/globe/MobileRaceList"),
+  () => import("@/components/home/MobileRaceList"),
   { ssr: true }
 );
 

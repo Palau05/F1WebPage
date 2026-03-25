@@ -1,3 +1,42 @@
+// Driver/constructor nationality → flag emoji (Ergast nationality strings)
+const nationalityToCode: Record<string, string> = {
+  Australian: "AU",
+  Austrian: "AT",
+  American: "US",
+  Belgian: "BE",
+  Brazilian: "BR",
+  British: "GB",
+  Canadian: "CA",
+  Chinese: "CN",
+  Danish: "DK",
+  Dutch: "NL",
+  Finnish: "FI",
+  French: "FR",
+  German: "DE",
+  Hungarian: "HU",
+  Italian: "IT",
+  Japanese: "JP",
+  Mexican: "MX",
+  Monegasque: "MC",
+  "New Zealander": "NZ",
+  Polish: "PL",
+  Russian: "RU",
+  Spanish: "ES",
+  Swedish: "SE",
+  Swiss: "CH",
+  Thai: "TH",
+};
+
+export function getNationalityFlag(nationality: string): string {
+  const code = nationalityToCode[nationality];
+  if (!code) return "";
+  return code
+    .toUpperCase()
+    .split("")
+    .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+    .join("");
+}
+
 // Country to ISO 3166-1 alpha-2 code mapping for flag emojis
 const countryToCode: Record<string, string> = {
   Australia: "AU",
@@ -36,31 +75,6 @@ export function getFlagEmoji(country: string): string {
     .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
     .join("");
 }
-
-// Country to ISO 3166-1 alpha-3 for globe polygon matching
-export const countryToAlpha3: Record<string, string> = {
-  Australia: "AUS",
-  China: "CHN",
-  Japan: "JPN",
-  Bahrain: "BHR",
-  "Saudi Arabia": "SAU",
-  USA: "USA",
-  Italy: "ITA",
-  Monaco: "MCO",
-  Spain: "ESP",
-  Canada: "CAN",
-  Austria: "AUT",
-  "United Kingdom": "GBR",
-  Belgium: "BEL",
-  Hungary: "HUN",
-  Netherlands: "NLD",
-  Azerbaijan: "AZE",
-  Singapore: "SGP",
-  Mexico: "MEX",
-  Brazil: "BRA",
-  Qatar: "QAT",
-  UAE: "ARE",
-};
 
 // Country to ISO 3166-1 numeric code — matches world-atlas@2 feature.id values
 export const countryToNumericISO: Record<string, number> = {

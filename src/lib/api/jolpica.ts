@@ -21,15 +21,6 @@ async function fetchJolpica<T>(
   return res.json();
 }
 
-// Season schedule
-export async function getSeasonSchedule(year: number = 2026) {
-  const data = await fetchJolpica<JolpicaResponse<RaceTable>>(
-    `/${year}.json`,
-    86400
-  );
-  return data.MRData.RaceTable.Races;
-}
-
 // Race results
 export async function getRaceResults(year: number, round: number) {
   const data = await fetchJolpica<JolpicaResponse<RaceTable>>(
@@ -84,6 +75,24 @@ export async function getPitStops(year: number, round: number) {
     3600
   );
   return data.MRData.RaceTable.Races[0]?.PitStops || [];
+}
+
+// All race results for a driver in a season
+export async function getDriverSeasonResults(year: number, driverId: string) {
+  const data = await fetchJolpica<JolpicaResponse<RaceTable>>(
+    `/${year}/drivers/${driverId}/results.json?limit=30`,
+    3600
+  );
+  return data.MRData.RaceTable.Races;
+}
+
+// All qualifying results for a driver in a season
+export async function getDriverSeasonQualifying(year: number, driverId: string) {
+  const data = await fetchJolpica<JolpicaResponse<RaceTable>>(
+    `/${year}/drivers/${driverId}/qualifying.json?limit=30`,
+    3600
+  );
+  return data.MRData.RaceTable.Races;
 }
 
 // Lap-by-lap data for position chart (paginated — API limits to ~100 timing entries per page)

@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { getDriverStandings, getConstructorStandings } from "@/lib/api/jolpica";
 import { getTeamColor } from "@/lib/data/team-colors";
+import { getNationalityFlag } from "@/lib/data/country-flags";
 
 export const revalidate = 21600; // 6 hours
 
@@ -56,12 +58,14 @@ export default async function StandingsPage() {
                   style={{ backgroundColor: getTeamColor(standing.Constructors[0]?.constructorId || "") }}
                 />
                 <div className="flex-1">
-                  <p className="font-[family-name:var(--font-display)] font-semibold text-on-surface">
-                    {standing.Driver.givenName}{" "}
-                    <span className="font-bold">{standing.Driver.familyName.toUpperCase()}</span>
-                  </p>
+                  <Link href={`/driver/${standing.Driver.driverId}`} className="hover:text-primary transition-colors">
+                    <p className="font-[family-name:var(--font-display)] font-semibold text-on-surface">
+                      {standing.Driver.givenName}{" "}
+                      <span className="font-bold">{standing.Driver.familyName.toUpperCase()}</span>
+                    </p>
+                  </Link>
                   <p className="text-xs text-on-surface-variant">
-                    {standing.Constructors[0]?.name}
+                    {getNationalityFlag(standing.Driver.nationality)} {standing.Constructors[0]?.name}
                   </p>
                 </div>
                 <div className="text-right">
@@ -104,7 +108,7 @@ export default async function StandingsPage() {
                     {standing.Constructor.name}
                   </p>
                   <p className="text-xs text-on-surface-variant">
-                    {standing.wins} wins
+                    {getNationalityFlag(standing.Constructor.nationality)} {standing.wins} wins
                   </p>
                 </div>
                 <div className="text-right">

@@ -1,21 +1,3 @@
-export function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-export function formatSessionTime(dateStr: string, timeStr: string): string {
-  const dt = new Date(`${dateStr}T${timeStr}`);
-  return dt.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZoneName: "short",
-  });
-}
-
 export function getCountdown(targetDate: string): {
   days: number;
   hours: number;

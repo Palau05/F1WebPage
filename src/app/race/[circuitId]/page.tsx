@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCircuitById, isRaceCompleted, circuits2026 } from "@/lib/data/circuits";
 import { getCircuitDescription } from "@/lib/data/circuit-descriptions";
+import { getFlagEmoji } from "@/lib/data/country-flags";
 import {
   getRaceResults,
   getQualifyingResults,
@@ -12,8 +13,6 @@ import {
 import StatusBadge from "@/components/ui/StatusBadge";
 import CountdownDisplay from "@/components/race/CountdownDisplay";
 import CircuitLayout from "@/components/race/CircuitLayout";
-import StrategyView from "@/components/race/StrategyView";
-import PositionChart from "@/components/race/PositionChart";
 import RaceDetailTabs from "@/components/race/RaceDetailTabs";
 
 export function generateStaticParams() {
@@ -82,7 +81,7 @@ export default async function RaceDetailPage({ params }: PageProps) {
           {circuit.raceName.toUpperCase()}
         </h1>
         <p className="text-lg text-on-surface-variant mt-2">
-          {circuit.name} — {circuit.city}, {circuit.country}
+          {circuit.name} — {circuit.city}, {getFlagEmoji(circuit.country)} {circuit.country}
         </p>
       </div>
 
