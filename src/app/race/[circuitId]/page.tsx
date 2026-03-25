@@ -41,12 +41,16 @@ export default async function RaceDetailPage({ params }: PageProps) {
 
   try {
     if (completed) {
-      [raceResults, qualifyingResults, pitStops, lapData] = await Promise.all([
+      const [resultsRes, qualifyingRes, pitStopsRes, lapDataRes] = await Promise.allSettled([
         getRaceResults(2026, circuit.round),
         getQualifyingResults(2026, circuit.round),
         getPitStops(2026, circuit.round),
         getLapData(2026, circuit.round),
       ]);
+      if (resultsRes.status === "fulfilled") raceResults = resultsRes.value;
+      if (qualifyingRes.status === "fulfilled") qualifyingResults = qualifyingRes.value;
+      if (pitStopsRes.status === "fulfilled") pitStops = pitStopsRes.value;
+      if (lapDataRes.status === "fulfilled") lapData = lapDataRes.value;
     } else {
       raceSchedule = await getRaceSchedule(2026, circuit.round);
     }
