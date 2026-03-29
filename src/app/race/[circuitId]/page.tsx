@@ -9,6 +9,7 @@ import {
   getRaceSchedule,
   getPitStops,
   getLapData,
+  getSprintResults,
 } from "@/lib/api/jolpica";
 import StatusBadge from "@/components/ui/StatusBadge";
 import CountdownDisplay from "@/components/race/CountdownDisplay";
@@ -37,6 +38,7 @@ export default async function RaceDetailPage({ params }: PageProps) {
   let raceSchedule = null;
   let pitStops = null;
   let lapData = null;
+  let sprintResults = null;
 
   try {
     if (completed) {
@@ -50,6 +52,11 @@ export default async function RaceDetailPage({ params }: PageProps) {
       if (qualifyingRes.status === "fulfilled") qualifyingResults = qualifyingRes.value;
       if (pitStopsRes.status === "fulfilled") pitStops = pitStopsRes.value;
       if (lapDataRes.status === "fulfilled") lapData = lapDataRes.value;
+
+      if (circuit.hasSprint) {
+        const sprintRes = await Promise.allSettled([getSprintResults(2026, circuit.round)]);
+        if (sprintRes[0].status === "fulfilled") sprintResults = sprintRes[0].value;
+      }
     } else {
       raceSchedule = await getRaceSchedule(2026, circuit.round);
     }
@@ -210,6 +217,8 @@ export default async function RaceDetailPage({ params }: PageProps) {
           pitStops={pitStops}
           lapData={lapData}
           totalLaps={circuit.laps}
+          sprintResults={sprintResults}
+          hasSprint={circuit.hasSprint}
         />
       )}
     </div>

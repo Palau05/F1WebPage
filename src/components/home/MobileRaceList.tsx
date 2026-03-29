@@ -4,6 +4,13 @@ import Link from "next/link";
 import { circuits2026, isRaceCompleted, getCurrentOrNextRace } from "@/lib/data/circuits";
 import StatusBadge from "@/components/ui/StatusBadge";
 
+const SHORT_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return `${d.getDate()} ${SHORT_MONTHS[d.getMonth()]}`;
+}
+
 export default function MobileRaceList() {
   const currentRace = getCurrentOrNextRace();
 
@@ -41,10 +48,7 @@ export default function MobileRaceList() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-on-surface-variant">
-                  {new Date(circuit.date).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                  })}
+                  {formatDate(circuit.date)}
                 </span>
                 <StatusBadge status={completed ? "completed" : "upcoming"} />
               </div>

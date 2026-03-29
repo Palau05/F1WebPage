@@ -34,8 +34,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Navigation Links — pill container */}
-        <div className="flex items-center gap-0.5 bg-surface-container/40 border border-white/5 px-1 py-1">
+        {/* Navigation Links — Apple-style segmented control */}
+        <div className="segmented-control flex items-center gap-1 bg-surface-container/50 border border-white/8 rounded-full px-1 py-1">
           {navLinks.map((link) => {
             const isActive =
               link.href === "/"
@@ -47,31 +47,17 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`
-                  relative group px-5 py-1.5
+                  relative px-5 py-1.5 rounded-full
                   font-[family-name:var(--font-display)] text-sm font-semibold tracking-wider
                   transition-all duration-300 ease-[cubic-bezier(0.2,1,0.3,1)]
                   ${
                     isActive
-                      ? "text-on-primary-container bg-primary-container/15 border border-primary-container/25"
-                      : "text-on-surface/50 hover:text-on-surface border border-transparent hover:border-white/8 hover:bg-white/4"
+                      ? "text-on-primary-container bg-primary-container/15 shadow-[0_0_12px_rgba(var(--md-primary-container-rgb,255,0,0),0.15)]"
+                      : "text-on-surface/50 hover:text-on-surface hover:bg-white/5"
                   }
                 `}
               >
-                {/* Top neon glow */}
-                <span
-                  className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-container to-transparent transition-opacity duration-500 ${
-                    isActive ? "opacity-80" : "opacity-0 group-hover:opacity-50"
-                  }`}
-                />
-
                 {link.label}
-
-                {/* Bottom neon glow */}
-                <span
-                  className={`absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary-container to-transparent transition-opacity duration-500 ${
-                    isActive ? "opacity-30" : "opacity-0 group-hover:opacity-20"
-                  }`}
-                />
               </Link>
             );
           })}

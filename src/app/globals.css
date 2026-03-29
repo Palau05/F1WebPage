@@ -70,6 +70,14 @@
   border-radius: 50% !important;
 }
 
+/* Apple-style segmented control */
+.segmented-control {
+  border-radius: 9999px !important;
+}
+.segmented-control a {
+  border-radius: 9999px !important;
+}
+
 body {
   background-color: var(--color-surface);
   color: var(--color-on-surface);

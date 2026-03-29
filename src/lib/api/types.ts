@@ -43,6 +43,7 @@ export interface Race {
   Sprint?: Session;
   SprintQualifying?: Session;
   Results?: RaceResult[];
+  SprintResults?: RaceResult[];
   QualifyingResults?: QualifyingResult[];
   PitStops?: PitStop[];
   Laps?: Lap[];

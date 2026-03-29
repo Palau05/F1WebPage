@@ -86,6 +86,15 @@ export async function getDriverSeasonResults(year: number, driverId: string) {
   return data.MRData.RaceTable.Races;
 }
 
+// Sprint results
+export async function getSprintResults(year: number, round: number) {
+  const data = await fetchJolpica<JolpicaResponse<RaceTable>>(
+    `/${year}/${round}/sprint.json`,
+    3600
+  );
+  return data.MRData.RaceTable.Races[0]?.SprintResults || [];
+}
+
 // All qualifying results for a driver in a season
 export async function getDriverSeasonQualifying(year: number, driverId: string) {
   const data = await fetchJolpica<JolpicaResponse<RaceTable>>(

@@ -4,10 +4,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import type { GlobeMethods } from "react-globe.gl";
-import { circuits2026 } from "@/lib/data/circuits";
+import { circuits2026, getCurrentOrNextRace } from "@/lib/data/circuits";
 import { getFlagEmoji, countryToNumericISO } from "@/lib/data/country-flags";
 
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
+
+const LONG_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function formatDateLong(dateStr: string): string {
+  const d = new Date(dateStr);
+  return `${d.getDate()} ${LONG_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 interface GlobePoint {
   id: string;
@@ -19,6 +26,7 @@ interface GlobePoint {
   date: string;
   round: number;
   isCompleted: boolean;
+  isNextRace: boolean;
 }
 
 interface GeoFeature {
@@ -39,6 +47,7 @@ export default function GlobeScene() {
 
   const points: GlobePoint[] = useMemo(() => {
     const now = new Date();
+    const nextRace = getCurrentOrNextRace();
     return circuits2026.map((c) => ({
       id: c.id,
       lat: c.lat,
@@ -49,6 +58,7 @@ export default function GlobeScene() {
       date: c.date,
       round: c.round,
       isCompleted: new Date(c.date) < now,
+      isNextRace: c.id === nextRace?.id,
     }));
   }, []);
 
@@ -125,13 +135,15 @@ export default function GlobeScene() {
       const glow = document.createElement("div");
       glow.className = "globe-dot";
       glow.style.position = "absolute";
-      glow.style.width = "24px";
-      glow.style.height = "24px";
+      glow.style.width = p.isNextRace ? "32px" : "24px";
+      glow.style.height = p.isNextRace ? "32px" : "24px";
       glow.style.borderRadius = "50%";
       glow.style.top = "50%";
       glow.style.left = "50%";
       glow.style.transform = "translate(-50%, -50%)";
-      glow.style.background = "radial-gradient(circle, rgba(225,6,0,0.3) 0%, transparent 70%)";
+      glow.style.background = p.isNextRace
+        ? "radial-gradient(circle, rgba(0,230,118,0.4) 0%, transparent 70%)"
+        : "radial-gradient(circle, rgba(225,6,0,0.3) 0%, transparent 70%)";
       glow.style.pointerEvents = "none";
       glow.style.transition = "all 200ms cubic-bezier(0.2, 1, 0.3, 1)";
       wrapper.appendChild(glow);
@@ -139,9 +151,9 @@ export default function GlobeScene() {
       // Dot
       const dot = document.createElement("div");
       dot.className = "globe-dot";
-      const size = 10;
-      const dotColor = p.isCompleted ? "#af8781" : "#e10600";
-      const dotShadow = p.isCompleted ? "rgba(175,135,129,0.4)" : "rgba(225,6,0,0.5)";
+      const size = p.isNextRace ? 13 : 10;
+      const dotColor = p.isNextRace ? "#00e676" : p.isCompleted ? "#af8781" : "#e10600";
+      const dotShadow = p.isNextRace ? "rgba(0,230,118,0.6)" : p.isCompleted ? "rgba(175,135,129,0.4)" : "rgba(225,6,0,0.5)";
       dot.style.width = `${size}px`;
       dot.style.height = `${size}px`;
       dot.style.borderRadius = "50%";
@@ -321,11 +333,7 @@ export default function GlobeScene() {
                 <div className="flex justify-between items-center">
                   <span className="label-engineering text-outline">DATE</span>
                   <span className="text-sm text-on-surface">
-                    {new Date(infoPoint.date).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
+                    {formatDateLong(infoPoint.date)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">

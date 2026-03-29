@@ -12,16 +12,11 @@ interface RaceDetailTabsProps {
   pitStops: PitStop[] | null;
   lapData: Lap[] | null;
   totalLaps: number;
+  sprintResults?: RaceResult[] | null;
+  hasSprint?: boolean;
 }
 
-type TabId = "results" | "qualifying" | "strategy" | "positions";
-
-const tabs: { id: TabId; label: string }[] = [
-  { id: "results", label: "RACE RESULT" },
-  { id: "qualifying", label: "QUALIFYING" },
-  { id: "strategy", label: "STRATEGY" },
-  { id: "positions", label: "POSITIONS" },
-];
+type TabId = "results" | "qualifying" | "sprint" | "strategy" | "positions";
 
 export default function RaceDetailTabs({
   raceResults,
@@ -29,7 +24,16 @@ export default function RaceDetailTabs({
   pitStops,
   lapData,
   totalLaps,
+  sprintResults = null,
+  hasSprint = false,
 }: RaceDetailTabsProps) {
+  const tabs: { id: TabId; label: string }[] = [
+    { id: "results", label: "RACE RESULT" },
+    { id: "qualifying", label: "QUALIFYING" },
+    ...(hasSprint ? [{ id: "sprint" as TabId, label: "SPRINT" }] : []),
+    { id: "strategy", label: "STRATEGY" },
+    { id: "positions", label: "POSITIONS" },
+  ];
   const [activeTab, setActiveTab] = useState<TabId>("results");
 
   return (
@@ -62,6 +66,9 @@ export default function RaceDetailTabs({
         )}
         {activeTab === "qualifying" && (
           <QualifyingResultsView results={qualifyingResults} />
+        )}
+        {activeTab === "sprint" && (
+          <RaceResultsView results={sprintResults} />
         )}
         {activeTab === "strategy" && (
           raceResults && pitStops ? (
