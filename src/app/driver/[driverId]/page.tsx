@@ -9,13 +9,15 @@ import { getTeamColor } from "@/lib/data/team-colors";
 import { getNationalityFlag } from "@/lib/data/country-flags";
 import { getFlagEmoji } from "@/lib/data/country-flags";
 
-export async function generateStaticParams() {
-  try {
-    const standings = await getDriverStandings(2026);
-    return standings.map((s) => ({ driverId: s.Driver.driverId }));
-  } catch {
-    return [];
-  }
+export const revalidate = 3600; // 1 hour
+
+// Render driver pages on-demand (ISR) instead of prerendering every driver at
+// build time. Building all of them at once hammers the rate-limited Jolpica API
+// and fails the build with 429s. Pages are generated on first visit and cached.
+export const dynamicParams = true;
+
+export function generateStaticParams() {
+  return [];
 }
 
 interface PageProps {

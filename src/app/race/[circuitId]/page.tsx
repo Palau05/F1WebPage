@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCircuitById, isRaceCompleted, circuits2026 } from "@/lib/data/circuits";
+import { getCircuitById, isRaceCompleted } from "@/lib/data/circuits";
 import { getCircuitDescription } from "@/lib/data/circuit-descriptions";
 import { getFlagEmoji } from "@/lib/data/country-flags";
 import {
@@ -16,8 +16,13 @@ import CountdownDisplay from "@/components/race/CountdownDisplay";
 import CircuitLayout from "@/components/race/CircuitLayout";
 import RaceDetailTabs from "@/components/race/RaceDetailTabs";
 
+// Render race pages on-demand (ISR) instead of prerendering every circuit at
+// build time. Building all of them at once hammers the rate-limited Jolpica API
+// and fails the build with 429s. Pages are generated on first visit and cached.
+export const dynamicParams = true;
+
 export function generateStaticParams() {
-  return circuits2026.map((c) => ({ circuitId: c.id }));
+  return [];
 }
 
 interface PageProps {

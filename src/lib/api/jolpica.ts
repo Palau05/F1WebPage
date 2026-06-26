@@ -6,19 +6,59 @@ import type {
 
 const BASE_URL = "https://api.jolpi.ca/ergast/f1";
 
+// Jolpica rate-limits bursts of requests. During a production build Next.js
+// prerenders many pages at once, so we (1) serialize requests with a small gap
+// and (2) retry on 429 / 5xx with exponential backoff. This keeps both the
+// build and runtime ISR regeneration resilient to "429 Too Many Requests".
+const MIN_REQUEST_GAP_MS = 300;
+const MAX_RETRIES = 5;
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// Global promise chain that spaces successive requests at least
+// MIN_REQUEST_GAP_MS apart, regardless of how many callers fire concurrently.
+let lastRequest: Promise<number> = Promise.resolve(0);
+
+function throttle(): Promise<void> {
+  const next = lastRequest.then(async (prevTime) => {
+    const wait = prevTime + MIN_REQUEST_GAP_MS - Date.now();
+    if (wait > 0) await sleep(wait);
+    return Date.now();
+  });
+  lastRequest = next;
+  return next.then(() => undefined);
+}
+
 async function fetchJolpica<T>(
   endpoint: string,
   revalidate: number = 86400
 ): Promise<T> {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    next: { revalidate },
-  });
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    await throttle();
 
-  if (!res.ok) {
+    const res = await fetch(`${BASE_URL}${endpoint}`, {
+      next: { revalidate },
+    });
+
+    if (res.ok) {
+      return res.json();
+    }
+
+    const retryable = res.status === 429 || res.status >= 500;
+    if (retryable && attempt < MAX_RETRIES) {
+      const retryAfter = Number(res.headers.get("retry-after"));
+      const backoff =
+        Number.isFinite(retryAfter) && retryAfter > 0
+          ? retryAfter * 1000
+          : 2 ** attempt * 500 + Math.random() * 250; // exponential + jitter
+      await sleep(backoff);
+      continue;
+    }
+
     throw new Error(`Jolpica API error: ${res.status} ${res.statusText}`);
   }
 
-  return res.json();
+  throw new Error(`Jolpica API error: retries exhausted for ${endpoint}`);
 }
 
 // Race results
