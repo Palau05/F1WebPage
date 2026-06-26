@@ -263,8 +263,8 @@ export default function GlobeScene() {
         ref={globeRef}
         width={dimensions.width}
         height={dimensions.height}
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
+        globeImageUrl="https://unpkg.com/three-globe/example/img/earth-night.jpg"
+        backgroundImageUrl="https://unpkg.com/three-globe/example/img/night-sky.png"
         atmosphereColor="#e10600"
         atmosphereAltitude={0.15}
         onGlobeClick={handleGlobeClick}
